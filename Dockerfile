@@ -8,6 +8,12 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Disable conflicting MPM modules
+RUN a2dismod mpm_prefork mpm_worker mpm_event 2>/dev/null || true
+
+# Enable mpm_prefork explicitly
+RUN a2enmod mpm_prefork
+
 # Enable required PHP extensions
 RUN docker-php-ext-install -j$(nproc) mysqli pdo pdo_mysql gd
 
