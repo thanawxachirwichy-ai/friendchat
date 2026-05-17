@@ -8,10 +8,13 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Disable conflicting MPM modules
-RUN a2dismod mpm_prefork mpm_worker mpm_event 2>/dev/null || true
+# Remove all MPM modules and config files
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load \
+          /etc/apache2/mods-enabled/mpm_*.conf \
+          /etc/apache2/mods-available/mpm_worker.load \
+          /etc/apache2/mods-available/mpm_event.load
 
-# Enable mpm_prefork explicitly
+# Enable only mpm_prefork
 RUN a2enmod mpm_prefork
 
 # Enable required PHP extensions
